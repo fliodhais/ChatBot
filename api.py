@@ -1,4 +1,5 @@
-from flask import Flask, jsonify
+from flask import Flask, request, jsonify
+import nltk
 from flask_restful import Api, Resource, reqparse
 import numpy as np
 import json
@@ -11,14 +12,16 @@ parser.add_argument('data')
 
 # Define how the api will respond to the post requests
 class QuestionClassifier(Resource):
-    def post(self):
-        args = parser.parse_args()
-        sentence = [json.loads(args['data'])]
+    @app.route('/foo', methods=['POST']) 
+    def post():
+        data = request.json
+        sentence = data['data']
         tokenized_dataset = tokenizer(sentence,  padding=True, truncation=True, return_tensors = "tf")
         output = model(**tokenized_dataset)["logits"]
         class_preds = [np.argmax(i) if np.sum(i) == 1 else len(i) for i in output > 0][0]
         
         return jsonify(Classes_dict.get(class_preds, "Sorry I cannot understand."))
+
 
 api.add_resource(QuestionClassifier, '/chartbot')
 
