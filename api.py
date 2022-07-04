@@ -1,8 +1,6 @@
 from flask import Flask, request, jsonify
-import nltk
 from flask_restful import Api, Resource, reqparse
 import numpy as np
-import json
 
 from transformers import AutoTokenizer
 import numpy as np
